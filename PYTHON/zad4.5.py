@@ -19,7 +19,7 @@ delta_y = 0
 
 show_front_wall = True
 
-# --- NOWOŚĆ: Lista na tekstury i indeks aktualnej ---
+# Lista na tekstury i indeks aktualnej
 texture_ids = []
 current_texture_index = 0
 
@@ -52,13 +52,14 @@ def startup():
     glEnable(GL_TEXTURE_2D)
     glEnable(GL_CULL_FACE)
 
-    # --- ZADANIE 4.5: Wczytujemy kilka tekstur do listy ---
-    # Używamy plików, które wysłałeś
+    # Wczytujemy kilka tekstur do listy
     global texture_ids
-    texture_ids.append(load_texture("tekstura.tga"))  # Indeks 0
-    texture_ids.append(load_texture("D1_t.tga"))  # Indeks 1
-    texture_ids.append(load_texture("D2_t.tga"))  # Indeks 2
-    texture_ids.append(load_texture("D3_t.tga"))  # Indeks 3
+    texture_ids.append(load_texture("tekstury/D1_t.tga"))
+    texture_ids.append(load_texture("tekstury/D2_t.tga"))
+    texture_ids.append(load_texture("tekstury/D3_t.tga"))
+    texture_ids.append(load_texture("tekstury/D4_t.tga"))
+    texture_ids.append(load_texture("tekstury/D5_t.tga"))
+    # itd
 
     # Ustawiamy pierwszą jako aktywną
     glBindTexture(GL_TEXTURE_2D, texture_ids[0])
@@ -85,8 +86,6 @@ def render(time):
     glRotatef(theta, 0.0, 1.0, 0.0)
     glRotatef(phi, 1.0, 0.0, 0.0)
 
-    # Tutaj nie musimy nic zmieniać w renderze, bo
-    # zmiana tekstury odbywa się w funkcji klawiatury (glBindTexture)
 
     # Podstawa
     glBegin(GL_QUADS)
@@ -160,10 +159,9 @@ def keyboard_key_callback(window, key, scancode, action, mods):
         if key == GLFW_KEY_H:
             show_front_wall = not show_front_wall
 
-        # --- ZADANIE 4.5: Przełączanie tekstur klawiszem T ---
+        # Przełączanie tekstur klawiszem T
         if key == GLFW_KEY_T:
-            # Zwiększamy indeks o 1, a modulo (%) sprawia, że jak dojdziemy do końca listy,
-            # to wrócimy do 0.
+            # Zwiększamy indeks o 1, a modulo (%) sprawia, że jak dojdziemy do końca listy, to wrócimy do 0.
             current_texture_index = (current_texture_index + 1) % len(texture_ids)
 
             # Podmieniamy aktywną teksturę
