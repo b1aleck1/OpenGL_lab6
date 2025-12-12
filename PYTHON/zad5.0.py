@@ -84,8 +84,10 @@ def oblicz_punkty_jajka():
 
             VERTICES[i][j] = [x, y, z]
 
-            # --- Współrzędne tekstury ---
-            # Mapujemy u i v bezpośrednio na współrzędne tekstury (0.0 do 1.0)
+            # --- Współrzędne tekstury [ZADANIE 5.0] ---
+            # Mapujemy wartości parametrów u i v (zakres 0-1) bezpośrednio na
+            # współrzędne tekstury. Dzięki temu jedna cała tekstura pokrywa
+            # cały obiekt, bez powielania jej na każdym kwadracie siatki.
             UV_COORDS[i][j] = [u, v]
 
 
@@ -95,6 +97,8 @@ def startup():
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_TEXTURE_2D)
 
+    # [ZADANIE 5.0] Włączenie Face Culling (usuwanie niewidocznych ścian)
+    # Zgodnie z instrukcją, opcja ta musi pozostać aktywna.
     glEnable(GL_CULL_FACE)
 
     # Czasem trzeba zmienić na GL_BACK, zależnie od sterownika,
@@ -106,9 +110,9 @@ def startup():
     pliki_tekstur = [
         "tekstury/P1_t.tga",
         "tekstury/P2_t.tga",
-        "tekstury/dirt.tga",
-        "tekstury/tekstura.tga",
-        "tekstury/moja-tekstura.tga"
+        "tekstury/M1_t.tga",
+        "tekstury/D9_t.tga",
+        "tekstury/N1_t.tga"
     ]
 
     print("Ładowanie tekstur...")
@@ -174,13 +178,14 @@ def render(time):
             t3 = UV_COORDS[i][j + 1]
             t4 = UV_COORDS[i + 1][j + 1]
 
-            # --- RYSOWANIE TRÓJKĄTÓW ---
-            # Musimy obsłużyć Face Culling. W połowie jajka (i >= N/2)
-            # siatka "zawija się", przez co wektory normalne celują do środka.
-            # Żeby tekstura była na zewnątrz, w drugiej połowie odwracamy kolejność rysowania.
+            # --- RYSOWANIE TRÓJKĄTÓW [ZADANIE 5.0] ---
+            # Musimy obsłużyć Face Culling. Parametryzacja jajka sprawia, że
+            # w połowie (i >= N/2) siatka "zawija się", przez co wektory normalne
+            # celują do środka. Aby tekstura była widoczna na zewnątrz,
+            # w drugiej połowie zmieniamy kolejność wierzchołków (winding order).
 
             if i < N / 2:
-                # POŁOWA 1: Normalna kolejność
+                # POŁOWA 1: Normalna kolejność (CCW/CW zależnie od ustawień)
                 # Trójkąt 1
                 glTexCoord2fv(t1);
                 glVertex3fv(p1)
@@ -196,21 +201,22 @@ def render(time):
                 glTexCoord2fv(t3);
                 glVertex3fv(p3)
             else:
-                # POŁOWA 2: Odwrócona kolejność (zamiana wierzchołków 2 i 3 miejscami)
+                # POŁOWA 2: Odwrócona kolejność [ZADANIE 5.0 - zmiana kolejności wierzchołków]
+                # Zamieniamy wierzchołki 2 i 3 miejscami, aby "odwrócić" trójkąt
                 # Trójkąt 1
                 glTexCoord2fv(t1);
                 glVertex3fv(p1)
                 glTexCoord2fv(t3);
-                glVertex3fv(p3)  # Zamiana
+                glVertex3fv(p3)  # Zamiana z p2
                 glTexCoord2fv(t2);
-                glVertex3fv(p2)  # Zamiana
+                glVertex3fv(p2)  # Zamiana z p3
                 # Trójkąt 2
                 glTexCoord2fv(t2);
                 glVertex3fv(p2)
                 glTexCoord2fv(t3);
-                glVertex3fv(p3)  # Zamiana
+                glVertex3fv(p3)  # Zamiana z p4
                 glTexCoord2fv(t4);
-                glVertex3fv(p4)  # Zamiana
+                glVertex3fv(p4)  # Zamiana z p3
 
     glEnd()
     glFlush()
@@ -236,7 +242,7 @@ def keyboard_key_callback(window, key, scancode, action, mods):
         if key == GLFW_KEY_ESCAPE:
             glfwSetWindowShouldClose(window, GLFW_TRUE)
 
-        # Przełączanie tekstur [T]
+        # Przełączanie tekstur [T] (Zadanie 4.5)
         if key == GLFW_KEY_T and texture_ids:
             current_texture_index = (current_texture_index + 1) % len(texture_ids)
             glBindTexture(GL_TEXTURE_2D, texture_ids[current_texture_index])

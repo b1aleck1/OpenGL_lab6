@@ -49,7 +49,7 @@ def startup():
     glEnable(GL_CULL_FACE)
 
     # Wczytanie własnej tekstury
-    load_texture("moja-tekstura.tga")
+    load_texture("dirt.tga")
 
 
 def shutdown():
