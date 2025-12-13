@@ -22,7 +22,7 @@ def load_texture(filename):
         print(f"Błąd: Nie można otworzyć pliku {filename}")
         sys.exit()
 
-    # Konwersja obrazu na bajty (RGB), TGA często przechowuje dane, które Pillow czyta bez problemu
+    # Konwersja obrazu na bajty (RGB)
     img_data = image.convert("RGB").tobytes("raw", "RGB", 0, -1)
 
     texture_id = glGenTextures(1)

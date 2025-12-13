@@ -8,8 +8,7 @@ from glfw.GLFW import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-# --- KONFIGURACJA ---
-N = 50  # Rozdzielczość jajka (im więcej, tym gładsze)
+N = 50
 viewer = [0.0, 0.0, 15.0]  # Kamera oddalona na osi Z
 
 # Zmienne do obracania myszką
@@ -38,10 +37,6 @@ def load_texture(filename):
         print(f"Błąd: Nie można otworzyć pliku {filename}. Pomijam.")
         return None
 
-    # Często w OpenGL trzeba obrócić obrazek, bo współrzędne (0,0) są w innym rogu
-    # Jeśli tekstura jest do góry nogami, odkomentuj linię poniżej:
-    # image = image.transpose(Image.FLIP_TOP_BOTTOM)
-
     img_data = image.convert("RGB").tobytes("raw", "RGB", 0, -1)
 
     texture_id = glGenTextures(1)
@@ -59,7 +54,7 @@ def load_texture(filename):
 
 
 def oblicz_punkty_jajka():
-    """Wylicza wierzchołki jajka i współrzędne tekstury"""
+    # Wylicza wierzchołki jajka i współrzędne tekstury
     u_vals = np.linspace(0.0, 1.0, N)
     v_vals = np.linspace(0.0, 1.0, N)
     pi = math.pi
@@ -69,8 +64,6 @@ def oblicz_punkty_jajka():
             u = u_vals[i]
             v = v_vals[j]
 
-            # --- Matematyka jajka ---
-            # Wzór parametryczny
             u2 = u * u
             u3 = u2 * u
             u4 = u3 * u
@@ -84,7 +77,6 @@ def oblicz_punkty_jajka():
 
             VERTICES[i][j] = [x, y, z]
 
-            # --- Współrzędne tekstury [ZADANIE 5.0] ---
             # Mapujemy wartości parametrów u i v (zakres 0-1) bezpośrednio na
             # współrzędne tekstury. Dzięki temu jedna cała tekstura pokrywa
             # cały obiekt, bez powielania jej na każdym kwadracie siatki.
@@ -97,12 +89,7 @@ def startup():
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_TEXTURE_2D)
 
-    # [ZADANIE 5.0] Włączenie Face Culling (usuwanie niewidocznych ścian)
-    # Zgodnie z instrukcją, opcja ta musi pozostać aktywna.
-    glEnable(GL_CULL_FACE)
-
-    # Czasem trzeba zmienić na GL_BACK, zależnie od sterownika,
-    # ale przy tym sposobie rysowania GL_FRONT zazwyczaj działa ok dla jajka.
+    glEnable(GL_CULL_FACE) # włączony
     glCullFace(GL_FRONT)
 
     global texture_ids
@@ -127,7 +114,6 @@ def startup():
         print("Sterowanie: Myszka (LPM) - obrót. Klawisz [T] - zmiana tekstury.")
     else:
         print("UWAGA: Nie znaleziono tekstur! Jajko będzie czarne.")
-        # Dodajemy '0' żeby program nie padł
         texture_ids.append(0)
 
     oblicz_punkty_jajka()
@@ -159,13 +145,7 @@ def render(time):
     glBegin(GL_TRIANGLES)
     for i in range(N - 1):
         for j in range(N - 1):
-
             # Pobieramy współrzędne wierzchołków i tekstur
-            # P1 -- P3
-            # |     |
-            # P2 -- P4
-            # Uwaga: w tablicy jest [i][j], [i+1][j]...
-
             # Wierzchołki
             p1 = VERTICES[i][j]
             p2 = VERTICES[i + 1][j]
@@ -177,12 +157,6 @@ def render(time):
             t2 = UV_COORDS[i + 1][j]
             t3 = UV_COORDS[i][j + 1]
             t4 = UV_COORDS[i + 1][j + 1]
-
-            # --- RYSOWANIE TRÓJKĄTÓW [ZADANIE 5.0] ---
-            # Musimy obsłużyć Face Culling. Parametryzacja jajka sprawia, że
-            # w połowie (i >= N/2) siatka "zawija się", przez co wektory normalne
-            # celują do środka. Aby tekstura była widoczna na zewnątrz,
-            # w drugiej połowie zmieniamy kolejność wierzchołków (winding order).
 
             if i < N / 2:
                 # POŁOWA 1: Normalna kolejność (CCW/CW zależnie od ustawień)
@@ -201,7 +175,7 @@ def render(time):
                 glTexCoord2fv(t3);
                 glVertex3fv(p3)
             else:
-                # POŁOWA 2: Odwrócona kolejność [ZADANIE 5.0 - zmiana kolejności wierzchołków]
+                # POŁOWA 2: Odwrócona kolejność
                 # Zamieniamy wierzchołki 2 i 3 miejscami, aby "odwrócić" trójkąt
                 # Trójkąt 1
                 glTexCoord2fv(t1);

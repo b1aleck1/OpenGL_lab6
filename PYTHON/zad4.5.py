@@ -59,7 +59,10 @@ def startup():
     texture_ids.append(load_texture("tekstury/D3_t.tga"))
     texture_ids.append(load_texture("tekstury/D4_t.tga"))
     texture_ids.append(load_texture("tekstury/D5_t.tga"))
-    # itd
+    texture_ids.append(load_texture("tekstury/M1_t.tga"))
+    texture_ids.append(load_texture("tekstury/N1_t.tga"))
+    texture_ids.append(load_texture("tekstury/P1_t.tga"))
+    # do wyboru, do koloru
 
     # Ustawiamy pierwszą jako aktywną
     glBindTexture(GL_TEXTURE_2D, texture_ids[0])

@@ -85,7 +85,7 @@ def render(time):
     glVertex3f(-5.0, 5.0, 0.0)
     glEnd()
 
-    # Ściany boczne (Trójkąty)
+    # Ściany boczne (trójkąty)
     # Wierzchołek ostrosłupa jest w punkcie (0, 0, 5) -> Środek tekstury (0.5, 0.5)
 
     glBegin(GL_TRIANGLES)
